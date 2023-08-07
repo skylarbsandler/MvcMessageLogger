@@ -12,10 +12,15 @@ namespace MvcMessageLogger.Models
         public string Content { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
-        public Message(string content)
+        //public Message(string content)
+        //{
+        //    Content = content;
+        //    CreatedAt = DateTime.Now.ToUniversalTime();
+        //}
+
+        public Message()
         {
-            Content = content;
-            CreatedAt = DateTime.Now.ToUniversalTime();
+
         }
     }
 }
