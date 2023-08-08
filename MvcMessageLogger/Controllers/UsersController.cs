@@ -25,6 +25,40 @@ namespace MvcMessageLogger.Controllers
             return View();
         }
 
+        [Route("/Users/Statistics")]
+        public IActionResult Statistics()
+        {
+            var usersWithMessages = _context.Users.Include(u => u.Messages);
+
+            //Order users by number of messages
+            ViewData["UserByMessages"] = usersWithMessages.OrderByDescending(user => user.Messages.Count()).ToList();
+
+            //Most commonly used word overall
+            ViewData["MostCommonWord"] = usersWithMessages
+                .AsEnumerable()
+                .SelectMany(message => message.Content.Split(new char[] { ' ', '.', ',' }, StringSplitOptions.RemoveEmptyEntries))
+                .GroupBy(word => word.ToLower())
+                .OrderByDescending(group => group.Count())
+                .Select(group => group.Key)
+                .First();
+
+            //Most commonly used word by user
+            ViewData["MostCommonWordByUser"] = usersWithMessages
+                .AsEnumerable()
+                .GroupBy(message => message.User)
+                .Select(group => new
+                {
+                    User = group.Key,
+                    MostCommonWord = group
+                    .SelectMany(message => message.Content.Split(new char[] { ' ', '.', ',' }, StringSplitOptions.RemoveEmptyEntries))
+                    .GroupBy(word => word.ToLower())
+                    .OrderByDescending(group => group.Count())
+                    .Select(group => group.Key)
+                    .First()
+                });
+            return View(usersWithMessages);
+        }
+
         [HttpPost]
         [Route("/users/")]
         public IActionResult Create(User user)
