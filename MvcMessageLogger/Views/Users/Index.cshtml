@@ -8,7 +8,11 @@
     {
         <div class="user-info">
             <p><strong>@user.Name</strong>: <a href="/users/@user.Id">@user.Username</a></p>
+            <form action="/Users/@user.Id" method="get">
+                <button type="submit">Login</button>
+            </form>
         </div>
+
     }
 }
 else

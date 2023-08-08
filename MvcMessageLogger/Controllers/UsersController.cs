@@ -36,5 +36,17 @@ namespace MvcMessageLogger.Controllers
 
             return RedirectToAction("index");
         }
+
+        // GET: /Users/1
+        [Route("/Users/{userId:int}")]
+        public IActionResult Show(int userId)
+        {
+            var user = _context.Users
+                .Where(u => u.Id == userId)
+                .Include(u => u.Messages)
+                .FirstOrDefault();
+
+            return View(user);
+        }
     }
 }
