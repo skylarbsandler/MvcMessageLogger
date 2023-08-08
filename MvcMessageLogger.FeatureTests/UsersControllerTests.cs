@@ -88,5 +88,24 @@ namespace MvcMessageLogger.FeatureTests
             Assert.NotNull(savedUser);
             Assert.Equal("Skylar", savedUser.Name);
         }
+
+        [Fact]
+        public async Task Show_ReturnsItemDetails()
+        {
+            var context = GetDbContext();
+            context.Users.Add(new User { Name = "Skylar", Username = "ssandler" });
+            context.Users.Add(new User { Name = "Scott", Username = "sganz" });
+            context.SaveChanges();
+
+            var client = _factory.CreateClient();
+            var response = await client.GetAsync("/Users/1");
+            var html = await response.Content.ReadAsStringAsync();
+
+            response.EnsureSuccessStatusCode();
+            Assert.Contains("Skylar", html);
+            Assert.DoesNotContain("Scott", html);
+            Assert.Contains("ssandler", html);
+            Assert.DoesNotContain("sganz", html);
+        }
     }
 }
